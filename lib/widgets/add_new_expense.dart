@@ -85,7 +85,7 @@ class _AddNewExpenseState extends State<AddNewExpense> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(28),
+      padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
       child: Column(
         children: [
           TextField(

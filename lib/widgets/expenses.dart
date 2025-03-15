@@ -13,51 +13,62 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpenseState extends State<Expenses> {
-  final List<Expense> expenseList = [
-    Expense(
-        title: "Groceries",
-        amount: 50000,
-        date: DateTime(2025, 3, 10),
-        category: Category.food),
-    Expense(
-        title: "Electricity Bill",
-        amount: 120000,
-        date: DateTime(2025, 3, 5),
-        category: Category.work),
-    Expense(
-        title: "Internet Subscription",
-        amount: 300000,
-        date: DateTime(2025, 3, 1),
-        category: Category.work),
-    Expense(
-        title: "Dinner at Restaurant",
-        amount: 150000,
-        date: DateTime(2025, 3, 8),
-        category: Category.food),
-    Expense(
-        title: "Gym Membership",
-        amount: 250000,
-        date: DateTime(2025, 3, 3),
-        category: Category.leisure),
-  ];
+  Widget? mainContent;
+
+  final List<Expense> expenseList = [];
 
   void _addExpenseBottomSheet() {
     showModalBottomSheet(
+      isScrollControlled: true,
       context: context,
       builder: (ctx) {
-        return AddNewExpense(addExpense: _addExpense,);
+        return AddNewExpense(
+          addExpense: _addExpense,
+        );
       },
     );
   }
 
-  void _addExpense(Expense expense){
+  void _addExpense(Expense expense) {
     setState(() {
       expenseList.add(expense);
     });
   }
 
+  void _removeExpense(Expense expense) {
+    var expenseIndex = expenseList.indexOf(expense);
+    setState(() {
+      expenseList.remove(expense);
+    });
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              expenseList.insert(expenseIndex, expense);
+            });
+          }),
+      content: const Text("Expense deleted."),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (expenseList.isNotEmpty) {
+      setState(() {
+        mainContent = ExpensesList(
+          expenses: expenseList,
+          onRemovedExpanse: _removeExpense,
+        );
+      });
+    } else {
+      setState(() {
+        mainContent = const Center(
+          child: Expanded(child: Text("No Expense Found, start add some")),
+        );
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.deepPurple,
@@ -82,7 +93,7 @@ class _ExpenseState extends State<Expenses> {
               Text("Expense Chart"),
               const SizedBox(height: 16),
               Expanded(
-                child: ExpensesList(expenses: expenseList),
+                child: mainContent!,
               ),
             ],
           ),
