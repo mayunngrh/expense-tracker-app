@@ -3,9 +3,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class AddNewExpense extends StatefulWidget {
   const AddNewExpense({super.key});
+
   @override
   State<AddNewExpense> createState() => _AddNewExpenseState();
 }
@@ -14,6 +14,7 @@ class _AddNewExpenseState extends State<AddNewExpense> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+  Category _selectedCategory = Category.food;
 
   void _openDatePicker() async {
     final now = DateTime.now();
@@ -21,19 +22,51 @@ class _AddNewExpenseState extends State<AddNewExpense> {
 
     final pickedDate = await showDatePicker(
       context: context,
-      initialDate: now,       // Default selected date is today
-      firstDate: firstDate,   // Earliest selectable date (1 year ago)
-      lastDate: now,          // Latest selectable date (today)
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: now,
     );
 
     if (pickedDate != null) {
       setState(() {
-        _selectedDate = pickedDate; // Store the selected date
+        _selectedDate = pickedDate;
       });
-
     }
   }
 
+  void _showAlertDialog() {
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text("INVALID INPUT"),
+              content: Text("Please fill in all fields before submitting"),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                    },
+                    child: Text("ok"))
+              ],
+            ));
+  }
+
+  void submitData() {
+    var isDataValid = true;
+    if (_titleController.text != null &&
+        _amountController.text != null &&
+        _selectedDate != null &&
+        _selectedCategory != null) {
+      isDataValid = true;
+    } else {
+      isDataValid = false;
+    }
+
+    if (isDataValid) {
+      // SUBMIT THE DATA
+    } else {
+      _showAlertDialog();
+    }
+  }
 
   @override
   void dispose() {
@@ -63,13 +96,17 @@ class _AddNewExpenseState extends State<AddNewExpense> {
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   decoration: InputDecoration(
-                      prefix: Text("IDR "), label: Text('Amount'),),
+                    prefix: Text("IDR "),
+                    label: Text('Amount'),
+                  ),
                 ),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(_selectedDate == null ? "dd/mm/yy" : formatter.format(_selectedDate!)),
+                  Text(_selectedDate == null
+                      ? "dd/mm/yy"
+                      : formatter.format(_selectedDate!)),
                   IconButton(
                       onPressed: _openDatePicker,
                       icon: Icon(Icons.calendar_month_outlined))
@@ -77,12 +114,51 @@ class _AddNewExpenseState extends State<AddNewExpense> {
               )
             ],
           ),
-          ElevatedButton(
-              onPressed: () {
-                print("Title: ${_titleController.text}");
-                print("Selected Date: $_selectedDate"); // Debugging
-              },
-              child: Text("Save Expense"))
+          SizedBox(
+            height: 12,
+          ),
+          Row(
+            children: [
+              DropdownButton(
+                  value: _selectedCategory,
+                  items: Category.values.map((category) {
+                    return DropdownMenuItem(
+                        value: category,
+                        child: Text(category.name.toUpperCase()));
+                  }).toList(),
+                  onChanged: (newValue) {
+                    setState(() {
+                      _selectedCategory = newValue!;
+                    });
+                  }),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "Cancel",
+                      ))),
+              SizedBox(
+                width: 12,
+              ),
+              Expanded(
+                  child: ElevatedButton(
+                      style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all<Color>(
+                              Colors.deepPurple)),
+                      onPressed: submitData,
+                      child: Text(
+                        "Save Expense",
+                        style: TextStyle(color: Colors.white),
+                      )))
+            ],
+          )
         ],
       ),
     );
