@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class AddNewExpense extends StatefulWidget {
-  const AddNewExpense({super.key});
+  const AddNewExpense({super.key, required this.addExpense});
+
+  final Function(Expense expense) addExpense;
 
   @override
   State<AddNewExpense> createState() => _AddNewExpenseState();
@@ -37,7 +39,8 @@ class _AddNewExpenseState extends State<AddNewExpense> {
   void _showAlertDialog() {
     showDialog(
         context: context,
-        builder: (ctx) => AlertDialog(
+        builder: (ctx) =>
+            AlertDialog(
               title: Text("INVALID INPUT"),
               content: Text("Please fill in all fields before submitting"),
               actions: [
@@ -62,7 +65,11 @@ class _AddNewExpenseState extends State<AddNewExpense> {
     }
 
     if (isDataValid) {
-      // SUBMIT THE DATA
+      widget.addExpense(Expense(title: _titleController.text,
+          amount: int.parse(_amountController.text),
+          date: _selectedDate!,
+          category: _selectedCategory!));
+      Navigator.pop(context);
     } else {
       _showAlertDialog();
     }

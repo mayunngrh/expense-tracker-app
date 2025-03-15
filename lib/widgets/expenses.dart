@@ -13,7 +13,7 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpenseState extends State<Expenses> {
-  final List<Expense> dummyExpenses = [
+  final List<Expense> expenseList = [
     Expense(
         title: "Groceries",
         amount: 50000,
@@ -45,9 +45,15 @@ class _ExpenseState extends State<Expenses> {
     showModalBottomSheet(
       context: context,
       builder: (ctx) {
-        return const AddNewExpense();
+        return AddNewExpense(addExpense: _addExpense,);
       },
     );
+  }
+
+  void _addExpense(Expense expense){
+    setState(() {
+      expenseList.add(expense);
+    });
   }
 
   @override
@@ -76,7 +82,7 @@ class _ExpenseState extends State<Expenses> {
               Text("Expense Chart"),
               const SizedBox(height: 16),
               Expanded(
-                child: ExpensesList(expenses: dummyExpenses),
+                child: ExpensesList(expenses: expenseList),
               ),
             ],
           ),
