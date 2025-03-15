@@ -1,6 +1,7 @@
 import 'package:expense_tracker_app/models/expense.dart';
 import 'package:expense_tracker_app/widgets/expense_card.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ExpensesList extends StatelessWidget {
   ExpensesList(
@@ -17,6 +18,9 @@ class ExpensesList extends StatelessWidget {
             onDismissed: (direction) {
               onRemovedExpanse(expenses[index]);
             },
+            background: Container(
+              color: Color.fromARGB(125, 234, 76, 76),
+            ),
             key: ValueKey(expenses[index]),
             child: ExpenseCard(expense: expenses[index])));
   }

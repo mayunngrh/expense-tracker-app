@@ -14,16 +14,24 @@ class ExpenseCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
         child: Column(
           children: [
-            Text(expense.title),
+            Container(
+                width: double.infinity,
+                child: Text(
+                  expense.title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold
+                  ),
+                  textAlign: TextAlign.start,
+                )),
             SizedBox(
-              height: 12,
+              height: 4,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text("IDR ${expense.amount}"),
-
                 Row(
                   children: [
                     Icon(categoryIcons[expense.category]),

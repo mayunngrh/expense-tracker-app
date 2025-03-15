@@ -1,3 +1,4 @@
+import 'package:expense_tracker_app/chart/chart.dart';
 import 'package:expense_tracker_app/widgets/add_new_expense.dart';
 import 'package:expense_tracker_app/widgets/expenses_list.dart';
 import 'package:flutter/cupertino.dart';
@@ -90,7 +91,7 @@ class _ExpenseState extends State<Expenses> {
           // Optional inner padding
           child: Column(
             children: [
-              Text("Expense Chart"),
+              Chart(expenses: expenseList),
               const SizedBox(height: 16),
               Expanded(
                 child: mainContent!,
